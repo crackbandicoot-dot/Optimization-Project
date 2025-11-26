@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 
 % --- PAQUETES DE PREÁMBULO ---
-
+\usepackage{url}
 % Codificación y fuentes
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -241,49 +241,23 @@ Donde:
 
 \section{Resultados experimentales}
 
-Los experimentos se realizaron con varias configuraciones, y los resultados se encuentran en la carpeta \texttt{results}.
+Se generaron 300 experimentos de forma aleatoria, con configuraciones dadas en función de los siguientes parámetros \textbf{learning rate},\textbf{tolerance},\textbf{max iterations} y 
+\textbf{start point}.
+
 
 \subsection{Resumen de los resultados}
-A continuación, se muestran algunos ejemplos representativos de los resultados obtenidos:
 
-\begin{table}[htbp]
-    \centering
-    \caption{Ejemplos representativos de resultados experimentales.}
-    \label{tab:results_exp}
-    \begin{tabular}{@{}llllll@{}}
-        \toprule
-        Experimento (x0) & Método & Solución & Valor $f$ & Iteraciones & Tiempo (s) \\
-        \midrule
-        Exp (0, 0) & Descenso Gradiente & [0.99997, $2.85 \times 10^{-5}$] & -4.71238898019 & 399 & 0.0093 \\
-        Exp (0, 0) & BFGS & [1.00000, $-4.85 \times 10^{-8}$] & -4.71238898038 & 9 & 0.0028 \\
-        Exp (2, -2) & Descenso Gradiente & [1.00000, $-1.38 \times 10^{-7}$] & -4.71238898038 & 318 & 0.011 \\
-        Exp (2, -2) & BFGS & [1.00000, $-2.57 \times 10^{-10}$] & -4.71238898038 & 11 & 0.0021 \\
-        Exp (-0.75, -0.75) & Descenso Gradiente & [0.99999, $4.81 \times 10^{-6}$] & -4.71238898038 & 791 & 0.0175 \\
-        Exp (-0.75, -0.75) & BFGS & [1.00000, $-3.33 \times 10^{-8}$] & -4.71238898038 & 9 & 0.0042 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-\subsection{Comparación de los resultados de los algoritmos en los experimentos realizados}
-\begin{itemize}
-    \item \textbf{BFGS:} Converge en muy pocas iteraciones (típicamente menos de 15), alcanza el valor óptimo con gran precisión (norma del gradiente del orden de $10^{-8}$ o menor) y requiere un tiempo de cómputo mínimo.La cantidad de iteraciones necesarias depende fuertemente de la tasa de aprendizaje y el punto inicial. Por ejemplo, con una tasa de aprendizaje de 0.1 y punto inicial $(0,0)$, se requieren 399 iteraciones. Con una tasa de 0.2 y punto inicial $(2,-2)$ (ver figura \ref{fig:experimt_5}), el método converge en 318 iteraciones. En otro experimento, con una tasa de 0.01 y partiendo de $(-1, -1)$, el algoritmo alcanzó el número máximo de 2000 iteraciones sin converger a la tolerancia deseada. Aunque en la mayoría de los casos se alcanza el óptimo, el tiempo de cómputo y la precisión final varían considerablemente según los parámetros.
-    \item \textbf{Descenso por Gradiente:} El número de iteraciones varía significativamente según la tasa de aprendizaje, la tolerancia y el punto de partida, pudiendo requerir cientos o miles de iteraciones para alcanzar una precisión comparable. Este método muestra una convergencia mucho más rápida y precisa, independientemente del punto inicial. En todos los experimentos, BFGS alcanza el óptimo en menos de 15 iteraciones y con una precisión de máquina, mostrando una gran robustez frente a la configuración inicial y los hiperparámetros.
-\end{itemize}
-
-
-En los experimentos realizados, ambos métodos convergen al mismo mínimo global teórico en $(x, y) \approx (1, 0)$, con valor objetivo $f(x, y) \approx -4.71238898$. Sin embargo, existen diferencias notables en el desempeño y sensibilidad de cada método(para una gráfica comparativa véase \ref{fig:iter_runtime_compare}):
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\textwidth]{experimt_5.png}
-    \caption{Imagen comparativa de la ejecución de los algoritmos}
-    \label{fig:experimt_5}
-\end{figure}
-
-Estos resultados confirman la unicidad y estabilidad del mínimo global, así como la amplia región de atracción del óptimo.
+\begin{tabular}{l r r}
+\textbf{Métrica} & \textbf{DG} & \textbf{BFGS} \\
+\hline
+Tiempo promedio (s) & 0.0715 & 0.0059 \\
+Tasa de Éxito (\%) & 13.0 & 94.3 \\
+Promedio de iteraciones & 3611 & 9 \\
+\end{tabular}
 
 \section{Discusión y conclusiones}
 
-El análisis teórico confirma la solución analítica $(1,0)$ y la unicidad del mínimo global, en concordancia con los resultados numéricos. Los experimentos muestran que BFGS es más eficiente y preciso, alcanzando el óptimo en muy pocas iteraciones y con gran robustez frente a los parámetros y puntos iniciales. El descenso por gradiente, aunque útil como referencia y para ilustrar la influencia de los hiperparámetros, requiere muchas más iteraciones y es más sensible a la tasa de aprendizaje y al punto de partida. La región de atracción del óptimo es amplia, lo que facilita la convergencia desde distintos puntos iniciales en ambos métodos.
+El análisis teórico confirma la solución analítica $(1,0)$ y la unicidad del mínimo global, en concordancia con los resultados numéricos. Los experimentos muestran que BFGS es más eficiente y preciso, alcanzando el óptimo en muy pocas iteraciones y con gran robustez frente a los parámetros y puntos iniciales. El descenso por gradiente, aunque útil como referencia y para ilustrar la influencia de los hiperparámetros, requiere muchas más iteraciones y es más sensible a la tasa de aprendizaje y al punto de partida.La eficiencia de BFGS se debe principalmente a el hecho de que usa información de la matrix Hessiana para dar los pasos a diferencia de Descenso del Gradiente en cuyo caso es fija la longitud de los pasos. La región de atracción del óptimo es amplia, lo que facilita la convergencia desde distintos puntos iniciales en ambos métodos.En la mayoría de los experimentos el algoritmo de Descenso por Gradiente no llega a converger a solución, todo parece indicar que se debe a que requiere una gran cantidad de iteraciones para ello, y muchas veces el parametro \textbf{max iterations} tiene un valor demasiado bajo de forma que no llega a converger.
 
 \section{Comparativa de los métodos}
 
@@ -314,6 +288,8 @@ A continuación se muestra una tabla comparativa de los distintos tiempos de eje
 
 \section{Archivos y reproducibilidad}
 \begin{itemize}
+    \item Script para generar experimentos:
+    \texttt{Scripts/generate\_experiments.py}
     \item Configuraciones y Resultados de los experimentos: \texttt{results/results\_exp1.json}
     \item Código fuente: \texttt{Implementación/Implementación\_Métodos.ipynb}
 \end{itemize}
